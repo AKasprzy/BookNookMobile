@@ -15,6 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final api = ApiService();
 
   bool loading = true;
+  bool loggedIn = false;
+
   List latestBooks = [];
   List reviews = [];
 
@@ -27,7 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    loadData();
+    init();
+  }
+
+  Future<void> init() async {
+    final token = await api.getToken();
+    setState(() {
+      loggedIn = token != null;
+    });
+    await loadData();
   }
 
   Future<void> loadData() async {
@@ -55,6 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void goTo(String route, {Object? args}) {
     Navigator.pushNamed(context, route, arguments: args);
+  }
+
+  Future<void> logout() async {
+    await api.saveToken("");
+    setState(() {
+      loggedIn = false;
+    });
   }
 
   @override
@@ -85,13 +102,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () => goTo('/login'),
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white),
+                      if (loggedIn) ...[
+                        TextButton(
+                          onPressed: () => goTo('/shelves'),
+                          child: const Text(
+                            "My Library",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                      )
+                        TextButton(
+                          onPressed: logout,
+                          child: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ] else ...[
+                        TextButton(
+                          onPressed: () => goTo('/login'),
+                          child: const Text(
+                            "Login",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      ]
                     ],
                   ),
                   const SizedBox(height: 20),
