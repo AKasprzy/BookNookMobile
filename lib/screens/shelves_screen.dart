@@ -112,6 +112,20 @@ class _ShelvesScreenState extends State<ShelvesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/stats'),
+                        icon: const Icon(Icons.bar_chart, color: Colors.white),
+                        label: const Text(
+                          "Stats",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
